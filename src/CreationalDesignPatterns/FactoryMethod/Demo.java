@@ -1,5 +1,6 @@
 package CreationalDesignPatterns.FactoryMethod;
 
+
 import CreationalDesignPatterns.FactoryMethod.factory.Dialog;
 import CreationalDesignPatterns.FactoryMethod.factory.HtmlDialog;
 import CreationalDesignPatterns.FactoryMethod.factory.WindowsDialog;
@@ -7,21 +8,37 @@ import CreationalDesignPatterns.FactoryMethod.factory.WindowsDialog;
 public class Demo {
     private static Dialog dialog;
     public static void main(String[] args){
-        configure();
-        runBusinessLogic();
+        try {
+            configure();
+            runBusinessLogic();
+        }
+        catch (UnknownOSException e){
+            System.out.println("Error: "+e.getMessage());
+        }
     }
 
-    static private void configure(){
-        if(System.getProperty("os.name").equals("Windows 11")){
-            dialog = new WindowsDialog();
+    static private void configure() throws UnknownOSException{
+        String osName = System.getProperty("os.name").toLowerCase();
+        if(osName.contains("web")){
+            dialog=new HtmlDialog();
+        }
+        else if (osName.contains("windows")){
+            dialog=new WindowsDialog();
         }
         else{
-            dialog = new HtmlDialog();
+            throw new UnknownOSException("Unknown operating system.");
         }
+
     }
 
     static void runBusinessLogic(){
         dialog.renderWindow();
     }
 
+}
+
+class UnknownOSException extends Exception{
+    public UnknownOSException(String message){
+        super(message);
+    }
 }
